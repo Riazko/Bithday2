@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>С Днем Рождения! 🎂</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg,  #E89EB8 40%, #F68FFA 60%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            color: white;
+        }
+
+        .container {
+            text-align: center;
+            z-index: 10;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .gift {
+            width: 150px;
+            height: 150px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            margin: 50px auto;
+            position: relative;
+        }
+
+        .gift:hover {
+            transform: scale(1.1);
+        }
+
+        .gift-box {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(45deg, #ff6b6b, #ffa726);
+            position: relative;
+            margin: 0 auto;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        .gift-lid {
+            width: 130px;
+            height: 30px;
+            background: linear-gradient(45deg, #ff5252, #ff9800);
+            position: absolute;
+            top: -15px;
+            left: -5px;
+            border-radius: 5px;
+        }
+
+        .gift-bow {
+            width: 40px;
+            height: 40px;
+            background: #4caf50;
+            position: absolute;
+            top: -20px;
+            left: 45px;
+            border-radius: 50%;
+            transform: rotate(45deg);
+        }
+
+        .counter {
+            font-size: 1.2em;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+
+        .message {
+            font-size: 1.5em;
+            margin: 20px 0;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .firework {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: explode 1s ease-out forwards;
+        }
+
+        @keyframes explode {
+            0% {
+                transform: translate(0, 0) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--tx), var(--ty)) scale(0);
+                opacity: 0;
+            }
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            opacity: 0;
+            animation: confetti-fall 3s ease-in forwards;
+        }
+
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(-100px) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(1000px) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        .final-message {
+            font-size: 2em;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎉С Днем Рождения, Сестра!🥳</h1>
+
+        <div class="message" id="message">
+            Нажми на подарок 7 раз чтобы открыть!
+        </div>
+
+        <div class="counter" id="counter">
+            Кликов: 0/7
+        </div>
+
+        <div class="gift" id="gift">
+            <div class="gift-box">
+                <div class="gift-lid"></div>
+                <div class="gift-bow"></div>
+            </div>
+        </div>
+
+        <div class="final-message" id="finalMessage" style="display: none;">
+            🎊УРАAAA! С Днем Рождения!🎁
+        </div>
+    </div>
+
+    <script>
+        let clickCount = 0;
+        const maxClicks = 7;
+        const gift = document.getElementById('gift');
+        const counter = document.getElementById('counter');
+        const message = document.getElementById('message');
+        const finalMessage = document.getElementById('finalMessage');
+
+        const messages = [
+            "Ты самая лучшая сестра на свете!",
+            "Желаю тебе море счастья!",
+            "Пусть все мечты сбываются!",
+            "Будь всегда такой же прекрасной!",
+            "Люблю тебя очень сильно!",
+            "Всего наилучшего",
+            "Успеха"
+        ];
+
+        gift.addEventListener('click', function() {
+            if (clickCount < maxClicks) {
+                clickCount++;
+                counter.textContent = `Кликов: ${clickCount}/${maxClicks}`;
+                message.textContent = messages[clickCount - 1];
+
+                // Анимация встряски подарка
+                gift.style.transform = 'scale(1.1) rotate(5deg)';
+                setTimeout(() => {
+                    gift.style.transform = 'scale(1.1) rotate(-5deg)';
+                    setTimeout(() => {
+                        gift.style.transform = 'scale(1.1) rotate(0deg)';
+                    }, 100);
+                }, 100);
+
+                // Создание маленького фейерверка при каждом клике
+                createMiniFirework();
+            }
+
+            if (clickCount === maxClicks) {
+                // Финальный взрыв
+                setTimeout(() => {
+                    gift.style.display = 'none';
+                    message.style.display = 'none';
+                    counter.style.display = 'none';
+                    finalMessage.style.display = 'block';
+                    createFireworks();
+                    createConfetti();
+                }, 500);
+            }
+        });
+
+        function createMiniFirework() {
+            const firework = document.createElement('div');
+            firework.className = 'firework';
+            firework.style.left = gift.offsetLeft + gift.offsetWidth / 2 + 'px';
+            firework.style.top = gift.offsetTop + gift.offsetHeight / 2 + 'px';
+            firework.style.background = getRandomColor();
+
+            const angle = Math.random() * Math.PI * 2;
+            const distance = 50 + Math.random() * 50;
+            const tx = Math.cos(angle) * distance;
+            const ty = Math.sin(angle) * distance;
+
+            firework.style.setProperty('--tx', tx + 'px');
+            firework.style.setProperty('--ty', ty + 'px');
+
+            document.body.appendChild(firework);
+
+            setTimeout(() => {
+                firework.remove();
+            }, 1000);
+        }
+
+        function createFireworks() {
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const firework = document.createElement('div');
+                    firework.className = 'firework';
+                    firework.style.left = Math.random() * window.innerWidth + 'px';
+                    firework.style.top = Math.random() * window.innerHeight + 'px';
+                    firework.style.background = getRandomColor();
+                    firework.style.width = '8px';
+                    firework.style.height = '8px';
+
+                    const angle = Math.random() * Math.PI * 2;
+                    const distance = 100 + Math.random() * 150;
+                    const tx = Math.cos(angle) * distance;
+                    const ty = Math.sin(angle) * distance;
+
+                    firework.style.setProperty('--tx', tx + 'px');
+                    firework.style.setProperty('--ty', ty + 'px');
+
+                    document.body.appendChild(firework);
+
+                    setTimeout(() => {
+                        firework.remove();
+                    }, 1000);
+                }, i * 100);
+            }
+        }
+
+        function createConfetti() {
+            for (let i = 0; i < 150; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * window.innerWidth + 'px';
+                    confetti.style.background = getRandomColor();
+                    confetti.style.width = (5 + Math.random() * 10) + 'px';
+                    confetti.style.height = (5 + Math.random() * 10) + 'px';
+                    confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+
+                    document.body.appendChild(confetti);
+
+                    setTimeout(() => {
+                        confetti.remove();
+                    }, 3000);
+                }, i * 20);
+            }
+        }
+
+        function getRandomColor() {
+            const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57', '#ff9ff3', '#54a0ff'];
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+    </script>
+</body>
+</html>
